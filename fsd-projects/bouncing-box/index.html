@@ -8,25 +8,36 @@
 	<style>
 		.box {
 			/*width: 70px;*/
-			width: 50px;
+			width: 100px;
 			/*height: 70px;*/
-			height: 50px;
+			height: 100px;
 			background-color: teal;
 			font-size: 300%;
 			text-align: center;
+			line-height: 100px;
+			color: white;
 			user-select: none;
 			display: block;
 			position: absolute;
 			top: 100px;
 			/* Change me! */
-			left: 1px;
+			left: 100px;
 		}
 
 		.board {
 			height: 100vh;
-			background-image: url("background.jpg");
+			background-color: blueviolet;
+			background-image: url("background.jpg"); /*added image challenge 1 */
 			background-position: center;
 			background-size: cover;
+		}
+		.centered{
+			top:50% !important;
+			left:50% !important;
+			transform:translate(-50%, -50%);
+			font-size: 18px;
+			text-align: center;
+			line-height: normal;
 		}
 
 	</style>
@@ -36,8 +47,15 @@
 
 <body class="board">
 	<!-- HTML for the box -->
-	<div class="box">?</div>
+	<div class="box">?</div> 
 
+	<div id="clickCounter" style="position: absolute; top: 10px; left: 10px; color: white; font-size: 20px;">
+  			Mis-clicks: 0
+			</div>
+
+			<button id="resetButton" style="display: none; position: absolute; top: 60%; left: 50%; transform: translateX(-50%); font-size: 20px; padding: 10px 20px;">
+  			Play Again
+			</button>
 	<script>
 		(function () {
 			'use strict'
@@ -52,14 +70,28 @@
 			var boardWidth = board.width();	// the maximum X-Coordinate of the screen
 			var boardHeight = jQuery(window).height();
 			var randNum = Math.random() * 100;
+			
 
 			// Every 50 milliseconds, call the update Function (see below)
-			setInterval(update, 50);
+			//var interval = setInterval(update, 50); 
 
 			// Every time the box is clicked, call the handleBoxClick Function (see below)
 			box.on('click', handleBoxClick);
 
-			// moves the Box to a new position on the screen along the X Axis and the Y-Axis
+			$(document).on("click", function(event){
+    			if (event.target !== box[0]) {
+        			misClicks++;
+					$("#clickCounter").text("Mis-Click: " + misClicks);
+        			if (misClicks >= 10) {
+            			endGame();
+        			}
+    			}
+			});
+
+
+
+			// moves the Box to a new position on the screen along the X Axis and the Y-Axis 
+			//Challenge 2
 			function moveBoxTo(newPositionX, newPositionY) {
 				box.css("left", newPositionX);
 				box.css("top", newPositionY);
@@ -70,6 +102,40 @@
 			function changeBoxText(newText) {
 				box.text(newText);
 			}
+				$("#resetButton").on("click", function () {
+			// Reset variables
+			positionX = 0;
+			positionY = 100;
+			points = 0;
+			numClicks = 0;
+			misClicks = 0;
+			speed = 5;
+			speedY = 5;
+			colorStr = "pink";
+
+			// Clear old interval first
+			clearInterval(interval);
+
+			// Restart game loop
+			interval = setInterval(update, 50);
+
+			// Reset box appearance and position
+			box.removeClass("centered");
+			box.text("?");
+			box.css({
+				left: "100px",
+				top: "100px",
+				"background-color": colorStr
+			});
+
+			// Reset mis-click counter display
+			$("#clickCounter").text("Mis-clicks: 0");
+
+			// Hide the reset button
+			$(this).hide();
+		});
+
+
 
 			//////////////////////////////////////////////////////////////////
 			/////////////////// YOUR CODE BELOW HERE /////////////////////////
@@ -82,12 +148,18 @@
 			var speed = 5;
 			var numClicks = 0;
 			var colorStr = "pink";
-			var speedY = 3;
+			var speedY = 5;
 			var positionY = 100;
+			var misClicks = 0;
 			
+			var interval = setInterval(update, 50);
 			
-
-
+			function endGame(){
+					clearInterval(interval);
+					box.text("Game over! You mis-clicked 10 times.");
+					box.addClass("centered");
+					document.getElementById("resetButton").style.display = "block";
+			}
 
 			/* 
 			This Function will be called 20 times/second. Each time it is called,
@@ -96,10 +168,9 @@
 			*/
 			function update() {
 				positionX += speed;	//update positionX and speed
-				positionY += speedY;
+				positionY += speedY; //Challenge 2
 
-
-			moveBoxTo(positionX, positionY);
+				moveBoxTo(positionX, positionY);
 				
 				if (positionX < 0){
 					speed = speed * -1;
@@ -120,32 +191,31 @@
 			it should increase the points total, increase the speed, and move the box to
 			the left side of the screen.
 			*/
-			function handleBoxClick(positionX, positionY) { 
-				points += 3; //increases points by 3
-				numClicks += 1;
-				changeBoxText(points); 
-				//speed = 3 * points + 10;
-				speed = 15;
-				//positionX = 0;
-			    positionX = randNum;
-
-				if (numClicks === 5){
+				function handleBoxClick(){
+				points += 3;//increases points by 3
+				numClicks +=1;//Challenge 5
+				changeBoxText(points);
+				speed = 10;
+				positionX = Math.random()*(boardWidth - 75) //Challenge 3
+		
+				if (numClicks === 3){ //Challenge 4
 					colorStr = "red";
 				}
-				else if(numClicks == 10){
+				else if(numClicks == 6){
 					colorStr = "blue";
 				}
-				else if(numClicks == 15){
+				else if(numClicks == 9){
 					colorStr = "green";
 				}
-				else if(numClicks == 20){
+				else if(numClicks == 12){
 					colorStr = "orange";
 				}
+				else if( numClicks > 12){
+					colorStr = "purple"
+				}
+		}
+	})();
 
-			};
-
-
-		})();
 	</script>
 </body>
 
