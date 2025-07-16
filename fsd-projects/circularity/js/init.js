@@ -95,12 +95,13 @@ var init = function (window) {
             if(circle.x < 0){
                 circle.x = canvas.width;
             }
+
             // if the circle has gone past the TOP of the screen then place it on the BOTTOM
             if(circle.y < 0){
                 circle.y = canvas.height;
             }
-            // if the circle has gone past the BOTTOM of the screen then place it on the TOP
-            if(circle.y > 0){
+            // if the circle has gone past the BOTTOM of the screen then place it on the TOP 
+            if(circle.y >= 0){  //I change this line
                 circle.y > canvas.height;
             }
 
