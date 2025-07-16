@@ -101,8 +101,8 @@ var init = function (window) {
                 circle.y = canvas.height;
             }
             // if the circle has gone past the BOTTOM of the screen then place it on the TOP 
-            if(circle.y >= 0){  //I change this line
-                circle.y > canvas.height;
+            if(circle.y > canvas.height){  //I change this line
+                circle.y = 0;
             }
 
             // YOUR TODO 6 CODE ENDS HERE //////////////////////////
