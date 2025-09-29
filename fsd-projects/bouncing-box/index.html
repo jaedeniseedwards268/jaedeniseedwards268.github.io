@@ -81,8 +81,8 @@
 
 
         // TODO 2 - Variable declarations
+         var positionX = 0;
 
-        var positionX = 0;
 
 
 
@@ -99,10 +99,10 @@
         function update() {
 
 
-        moveBoxTo(400); // Moves box to x-position 200
-        moveBoxTo(400); // Moves box to right edge
-        positionX +=10; // Adds 10 to positionX
-      
+        //moveBoxTo(200); // Moves box to x-position 200 // Moves box to x-position 200
+        moveBoxTo(boardWidth); // Moves box to right edge
+        positionX += 10; // Increases position by 10
+
 
          
         }
@@ -116,8 +116,6 @@
          * - move the box to the left side of the screen.
          */
         function handleBoxClick() {
-          positionX = 0;
-          changeBoxText(0);
 
 
 
@@ -136,7 +134,3 @@
     </script>
   </body>
 </html>
-
-
-
-
