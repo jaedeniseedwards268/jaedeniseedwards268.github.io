@@ -19,21 +19,51 @@
       line-height: 70px;
       color: white;
       border-radius: 10px;
+      z-index: 2;
     }
 
     .board {
       height: 100vh;
-      background-image: url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRWGNnlvR10sY3jn6-xUAoRIYuAz0KodHzLow&s");
+      background-image: url("https://th.bing.com/th/id/R.29e45db8d5dc6e723a948a54b10ceade?rik=qarISYXT%2fKMzFA&pid=ImgRaw&r=0");
       background-color: #3c15ea;
       background-position: center;
       background-size: cover;
       overflow: hidden;
+      position: relative;
+    }
+
+    .missclick-counter {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background-color: rgba(0, 0, 0, 0.6);
+      color: white;
+      padding: 10px 15px;
+      border-radius: 8px;
+      font-family: sans-serif;
+      font-size: 16px;
+      z-index: 5;
+    }
+
+    .game-over {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 60px;
+      color: red;
+      font-weight: bold;
+      text-shadow: 2px 2px black;
+      display: none;
+      z-index: 10;
     }
   </style>
 </head>
 
 <body class="board">
   <div class="box">?</div>
+  <div class="missclick-counter">Misses: 0</div>
+  <div class="game-over">GAME OVER</div>
 
   <script>
     (function () {
@@ -41,6 +71,9 @@
 
       var box = jQuery(".box");
       var board = jQuery(".board");
+      var counter = jQuery(".missclick-counter");
+      var gameOverMessage = jQuery(".game-over");
+
       var boardWidth = board.width();
       var boardHeight = board.height();
 
@@ -50,16 +83,19 @@
       });
 
       setInterval(update, 50);
-      box.on("click", handleBoxClick);
 
-      // Position and speed variables
+      box.on("click", handleBoxClick);
+      board.on("click", handleBoardClick);
+
       var positionX = 0;
-      var positionY = 100; // start near top
+      var positionY = 100;
       var speedX = 0;
       var speedY = 0;
       var directionX = 1;
       var directionY = 1;
       var points = 0;
+      var missClicks = 0;
+      var gameOver = false;
 
       function moveBoxTo(x, y) {
         box.css("left", x);
@@ -80,16 +116,15 @@
       }
 
       function update() {
-        // Update position
+        if (gameOver) return;
+
         positionX += speedX * directionX;
         positionY += speedY * directionY;
 
-        // Bounce off left/right walls
         if (positionX <= 0 || positionX + box.width() >= boardWidth) {
           directionX *= -1;
         }
 
-        // Bounce off top/bottom walls
         if (positionY <= 0 || positionY + box.height() >= boardHeight) {
           directionY *= -1;
         }
@@ -97,4 +132,51 @@
         moveBoxTo(positionX, positionY);
       }
 
-      function handleBoxClick() {
+      function handleBoxClick(event) {
+        if (gameOver) return;
+
+        points += 3;
+        changeBoxText(points);
+
+        box.css("background-color", getRandomColor());
+
+        if (speedX === 0 && speedY === 0) {
+          speedX = 5;
+          speedY = 5;
+        } else {
+          speedX += 1;
+          speedY += 1;
+        }
+
+        missClicks = 0;
+        updateMissClicks();
+        event.stopPropagation(); // Prevents board click from also firing
+      }
+
+      function handleBoardClick() {
+        if (gameOver) return;
+
+        missClicks++;
+        updateMissClicks();
+
+        if (missClicks >= 10) {
+          triggerGameOver();
+        }
+      }
+
+      function updateMissClicks() {
+        counter.text("Misses: " + missClicks);
+      }
+
+      function triggerGameOver() {
+        gameOver = true;
+        gameOverMessage.fadeIn(500);
+        speedX = 0;
+        speedY = 0;
+        box.off("click");
+        board.off("click");
+      }
+    })();
+  </script>
+</body>
+</html>
