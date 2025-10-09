@@ -27,7 +27,7 @@
       }
 
       .game-over {
-        display: none;
+        display: none; 
         color: red;
         font-size: 24px;
         font-weight: bold;
@@ -39,12 +39,14 @@
   <body class="board">
     <div class="box">?</div>
     <div class="misclick-counter">Misses: 0</div>
-    <div class="game-over">Jacqueline's Bouncing Box - GAME OVER</div>
+    <div class="game-over">Too many misclicks - GAME OVER</div> 
+    <h1>Jacqueline's Bouncing Box </h1>
 
     <script>
       (function () {
         "use strict";
         var gameOverMessage = jQuery(".game-over");
+
         var box = jQuery(".box");
         var board = jQuery(".board");
         var boardWidth = board.width();
@@ -56,18 +58,8 @@
 
         var interval = setInterval(update, 50);
 
-        // ✅ wrap box click to stop propagation
-        box.on("click", function (event) {
-          event.stopPropagation(); // prevent board click from firing
-          handleBoxClick(event);
-        });
-
-        // ✅ board click now only triggers if not clicking on box
-        board.on("click", function (event) {
-          if (!jQuery(event.target).hasClass("box")) {
-            handleBoardClick();
-          }
-        });
+        box.on("click", handleBoxClick);
+        board.on("click", handleBoardClick);
 
         var colorStr = "rgb(210, 180, 140)";
         box.css("background-color", colorStr);
@@ -138,6 +130,7 @@
 
           misClicks = 0;
           updatemisClicks();
+          event.stopPropagation();
         }
 
         function handleBoardClick() {
@@ -147,7 +140,7 @@
           updatemisClicks();
 
           if (misClicks >= 10) {
-            triggerGameOver();
+            triggerGameOver(); 
           }
         }
 
@@ -157,7 +150,7 @@
 
         function triggerGameOver() {
           gameOver = true;
-          gameOverMessage.fadeIn(500);
+          gameOverMessage.fadeIn(500); 
           speed = 0;
           speedY = 0;
           box.off("click");
