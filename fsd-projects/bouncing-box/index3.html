@@ -19,21 +19,23 @@
         left: 0px;
       }
 
+
       .board {
         height: 100vh;
-        background-image: url("https://wallpapers.com/images/hd/solid-color-background-3vqkegeumz1wa072.jpg");
-        background-color: #cccccc;
+        background-image: url("https://img.freepik.com/premium-vector/gradient-abstract-background-design_52683-70290.jpg");
+        background-color: #3c15ea;
         background-position: center;
         background-size: cover;
-        }
+    }
     </style>
-    <!--  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script> -->
+    <!--    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script> -->
   </head>
 
 
   <body class="board">
     <!-- HTML for the box -->
     <div class="box">?</div>
+    
 
 
     <script>
@@ -50,13 +52,12 @@
         var box = jQuery(".box"); // reference to the HTML .box element
         var board = jQuery(".board"); // reference to the HTML .board element
         var boardWidth = board.width(); // the maximum X-Coordinate of the screen
-
+        var boardHeight = jQuery(window).height();
 
         // update the boardWidth variable when the window is resized
         jQuery(window).on("resize", function () {
           boardWidth = board.width();
         });
-        
 
 
         // Every 50 milliseconds, call the update Function (see below)
@@ -65,17 +66,15 @@
 
         // Every time the box is clicked, call the handleBoxClick Function (see below)
         box.on("click", handleBoxClick);
-        var colorStr = "rgb(210, 180, 140)";
-        box.css("background-color", colorStr);
 
 
-        // moves the Box to a new position on the screen along the X-Axis and Y-Axis
-
+        // moves the Box to a new position on the screen along the X-Axis
         function moveBoxTo(newPositionX, newPositionY) {
           box.css("left", newPositionX);
           box.css("top", newPositionY);
         }
-        
+
+
         // changes the text displayed on the Box
         function changeBoxText(newText) {
           box.text(newText);
@@ -88,14 +87,11 @@
 
 
         // TODO 2 - Variable declarations
-         var positionX = 0;
-         var points = 0;
-         var speed = 10;
-         var positionY = 0;
-         var speedY = 10;
-         var boardHeight = jQuery(window).height();
-         var randNum = Math.random() * 100;
-
+        var positionX = 0;
+        var points = 0;
+        var speed = 0;
+        var positionY;
+        var speedY;
 
         /**
          * This Function will be called 20 times/second.
@@ -103,24 +99,33 @@
          * If the box drifts off the screen, turn it around!
          */
         function update() {
+        positionX = positionX + speed; // Increases positionX by speed.
+        positionY = positionY + speed; //Increase positionY by speed
         
-        positionX += speed; // Increases position by speed
-        positionY += speedY; 
+        
 
-        //moveBoxTo(200); // Moves box to x-position 200 // Moves box to x-position 200
-        moveBoxTo(positionX, positionY); // Moves box to right edge
-          
-        if (positionX < 0) {
-                      speed = -speed; } 
-        else if (positionX > boardWidth - box.width()) {
-                      speed = -speed;
-                  }
-        if (positionY < 0) {
-                      speedY = -speedY;}
-        else if (positionY > boardHeight - box.height()) {
-                      speedY = -speedY;
-                  }
-         
+
+        if (positionX >= boardWidth) {
+            // Code to reverse speed goes here
+            speed *= -1;
+            }
+        else if (positionX < 0) {
+            // Code to reverse speed goes here
+            speed *= -1;
+            speed = 3 * points + 10;
+            }
+
+        if (positionY >= boardHeight) {
+            // Code to reverse speed goes here
+            speed *= -1;
+            }
+        else if (positionY < 0) {
+            // Code to reverse speed goes here
+            speed *= -1;
+            speed = 3 * points + 10;
+            }
+
+       moveBoxTo(positionX, positionY);    
         }
 
 
@@ -131,16 +136,24 @@
          * - increase the speed
          * - move the box to the left side of the screen.
          */
-         function handleBoxClick() {
-                points += 3;
-                numClicks += 1;
-                changeBoxText(points);
-                speed = 10;
-                positionX = Math.random() * (boardWidth - box.width());
-         }
-         
+        function handleBoxClick() {
+            positionX = 0;
+            changeBoxText(points);
+            points++;
+            speed += 3
+
+        }
+
+
+
+
        
       })();
     </script>
   </body>
 </html>
+
+
+
+
+
