@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Bouncing Box</title>
+    <script src="jquery.min.js"></script>
+    <style>
+      .box {
+        width: 70px;
+        height: 70px;
+        background-color: teal;
+        font-size: 300%;
+        text-align: center;
+        user-select: none;
+        display: block;
+        position: absolute;
+        top: 100px;
+        left: 0px;
+      }
+
+      .board {
+        height: 100vh;
+        background-image: url("https://images.pexels.com/photos/2101187/pexels-photo-2101187.jpeg");
+        background-color: #0854eb;
+        background-position: center;
+        background-size: cover;
+      }
+
+      .game-over {
+        display: none;
+        color: red;
+        font-size: 24px;
+        font-weight: bold;
+        margin-top: 10px;
+      }
+    </style>
+  </head>
+
+  <body class="board">
+    <div class="box">?</div>
+    <div class="misclick-counter">Misses: 0</div>
+    <div class="game-over">Jacqueline's Bouncing Box - GAME OVER</div>
+
+    <script>
+      (function () {
+        "use strict";
+        var gameOverMessage = jQuery(".game-over");
+        var box = jQuery(".box");
+        var board = jQuery(".board");
+        var boardWidth = board.width();
+        var counter = jQuery(".misclick-counter");
+
+        jQuery(window).on("resize", function () {
+          boardWidth = board.width();
+        });
+
+        var interval = setInterval(update, 50);
+
+        // ✅ wrap box click to stop propagation
+        box.on("click", function (event) {
+          event.stopPropagation(); // prevent board click from firing
+          handleBoxClick(event);
+        });
+
+        // ✅ board click now only triggers if not clicking on box
+        board.on("click", function (event) {
+          if (!jQuery(event.target).hasClass("box")) {
+            handleBoardClick();
+          }
+        });
+
+        var colorStr = "rgb(210, 180, 140)";
+        box.css("background-color", colorStr);
+
+        function moveBoxTo(newPositionX, newPositionY) {
+          box.css("left", newPositionX);
+          box.css("top", newPositionY);
+        }
+
+        function changeBoxText(newText) {
+          box.text(newText);
+        }
+
+        function getRandomColor() {
+          var r = Math.random() * 255;
+          var g = Math.random() * 255;
+          var b = Math.random() * 255;
+          return "rgb(" + r + ", " + g + ", " + b + ")";
+        }
+
+        function endGame() {
+          clearInterval(interval);
+        }
+
+        var positionX = 0;
+        var points = 0;
+        var speed = 10;
+        var positionY = 0;
+        var speedY = 10;
+        var boardHeight = jQuery(window).height();
+        var randNum = Math.random() * 100;
+        var misClicks = 0;
+        var gameOver = false;
+
+        function update() {
+          if (gameOver) return;
+
+          positionX += speed;
+          positionY += speedY;
+
+          moveBoxTo(positionX, positionY);
+
+          if (positionX < 0) {
+            speed = -speed;
+          } else if (positionX > boardWidth - box.width()) {
+            speed = -speed;
+          }
+
+          if (positionY < 0) {
+            speedY = -speedY;
+          } else if (positionY > boardHeight - box.height()) {
+            speedY = -speedY;
+          }
+        }
+
+        function handleBoxClick(event) {
+          if (gameOver) return;
+
+          positionX = 0;
+          changeBoxText(points);
+          points++;
+          box.css("background-color", getRandomColor());
+
+          if (points % 3 === 0) {
+            box.css("background-color", getRandomColor());
+            speed = speed + 2;
+          }
+
+          misClicks = 0;
+          updatemisClicks();
+        }
+
+        function handleBoardClick() {
+          if (gameOver) return;
+
+          misClicks++;
+          updatemisClicks();
+
+          if (misClicks >= 10) {
+            triggerGameOver();
+          }
+        }
+
+        function updatemisClicks() {
+          counter.text("Misses: " + misClicks);
+        }
+
+        function triggerGameOver() {
+          gameOver = true;
+          gameOverMessage.fadeIn(500);
+          speed = 0;
+          speedY = 0;
+          box.off("click");
+          board.off("click");
+        }
+      })();
+    </script>
+  </body>
+</html>
