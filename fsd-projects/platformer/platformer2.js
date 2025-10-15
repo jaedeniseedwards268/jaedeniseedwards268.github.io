@@ -37,47 +37,28 @@ $(function () {
 
 
     // TODO 2 - Create Platforms
-    //moving platform
-    createPlatform(400, 300, 200, 20, "blue", 300, 500, 1);
-      //Level 1- Slight Slope left + right
-    createPlatform(50, 600, 300, 20, "sienna");
-    createPlatform(350, 580, 300, 20, "sienna");
+    createPlatform(100, 300, 150, 25, "red");
+    createPlatform(200, 400, 250, 25, "blue");
+    createPlatform(300, 500, 350, 25, "green");
+    createPlatform(400, 600, 450, 25, "purple");
+    createPlatform(500, 700, 550, 25, "orange");
+   
 
-    //Level 2 - Opposite slope
-    createPlatform(100, 480, 300, 20, "firebrick");
-    createPlatform(400, 500, 300, 20, "firebrick");
-      
-    //Level 3 - Smaller middle section
-    createPlatform(200, 80, 300, 20, "darkred");
-    
-    //Level 4 - Alternating sides
-    createPlatform(50, 280, 250, 20, "tomato");
-    createPlatform(400, 260, 250, 20, "tomato");
-    
-    //Level 5  - Near top
-    createPlatform(150, 150, 300, 20, "orange");
-    
-    //top platform
-    createPlatform(250,80,200,20, "gold");
-    
-    
+
+
+
 
 
     // TODO 3 - Create Collectables
-    createCollectable("grace", 400, 260, 0.9, 0.7);
-    createCollectable("max", 250, 200, 0.2, 0.7);
-    createCollectable("kennedi", 150, 600, 0.3, 0.7);
-    //moving collectable
-    createCollectable("database", 200, 100, 0, 1, 100, 300, 2);
+
+
 
 
 
 
    
     // TODO 4 - Create Cannons
-    createCannon("right", 500, 2000);
-    createCannon("left", 0, 3000);
-    createCannon("bottom", 300, 2000);
+
 
 
 
