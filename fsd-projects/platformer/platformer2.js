@@ -1,74 +1,107 @@
-$(function () {
-  // initialize canvas and context when able to
-  canvas = document.getElementById("canvas");
-  ctx = canvas.getContext("2d");
-  window.addEventListener("load", loadJson);
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Simple Ladder Movement</title>
+  <style>
+    canvas {
+      background: #222;
+      display: block;
+      margin: 0 auto;
+      border: 3px solid white;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="gameCanvas" width="800" height="750"></canvas>
+  <script>
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
 
+    // --- Player Object ---
+    const player = {
+      x: 100,
+      y: 660,
+      width: 30,
+      height: 40,
+      color: "cyan",
+      vy: 0,
+      gravity: 0.5,
+      speed: 3,
+      climbing: false
+    };
 
-  function setup() {
-    if (firstTimeSetup) {
-      halleImage = document.getElementById("player");
-      projectileImage = document.getElementById("projectile");
-      cannonImage = document.getElementById("cannon");
-      $(document).on("keydown", handleKeyDown);
-      $(document).on("keyup", handleKeyUp);
-      firstTimeSetup = false;
-      //start game
-      setInterval(main, 1000 / frameRate);
+    // --- Ladder List (use x, y, width, height same as platforms) ---
+    const ladders = [
+      { x: 120, y: 620, width: 20, height: 100 },
+      { x: 620, y: 600, width: 20, height: 100 },
+      { x: 180, y: 520, width: 20, height: 80 },
+      { x: 500, y: 520, width: 20, height: 80 }
+    ];
+
+    // --- Input Tracking ---
+    const keys = {};
+    document.addEventListener("keydown", e => keys[e.key] = true);
+    document.addEventListener("keyup", e => keys[e.key] = false);
+
+    function drawPlayer() {
+      ctx.fillStyle = player.color;
+      ctx.fillRect(player.x, player.y, player.width, player.height);
     }
 
+    function drawLadders() {
+      ctx.fillStyle = "gray";
+      for (let l of ladders) {
+        ctx.fillRect(l.x, l.y, l.width, l.height);
+      }
+    }
 
-    // Create walls - do not delete or modify this code
-    createPlatform(-50, -50, canvas.width + 100, 50); // top wall
-    createPlatform(-50, canvas.height - 10, canvas.width + 100, 200, "navy"); // bottom wall
-    createPlatform(-50, -50, 50, canvas.height + 500); // left wall
-    createPlatform(canvas.width, -50, 50, canvas.height + 100); // right wall
+    function isTouchingLadder() {
+      return ladders.some(l =>
+        player.x + player.width > l.x &&
+        player.x < l.x + l.width &&
+        player.y + player.height > l.y &&
+        player.y < l.y + l.height
+      );
+    }
 
+    function update() {
+      // Check ladder collision
+      if (isTouchingLadder() && (keys["ArrowUp"] || keys["ArrowDown"])) {
+        player.climbing = true;
+        player.vy = 0; // stop gravity
+      } else if (!isTouchingLadder()) {
+        player.climbing = false;
+      }
 
-    //////////////////////////////////
-    // ONLY CHANGE BELOW THIS POINT //
-    //////////////////////////////////
+      // Apply movement
+      if (player.climbing) {
+        if (keys["ArrowUp"]) player.y -= player.speed;
+        if (keys["ArrowDown"]) player.y += player.speed;
+      } else {
+        // normal gravity
+        player.vy += player.gravity;
+        player.y += player.vy;
+        if (player.y + player.height > canvas.height - 40) { // ground stop
+          player.y = canvas.height - 40 - player.height;
+          player.vy = 0;
+        }
+      }
 
+      // Horizontal movement
+      if (keys["ArrowLeft"]) player.x -= player.speed;
+      if (keys["ArrowRight"]) player.x += player.speed;
+    }
 
-    // TODO 1 - Enable the Grid
-    toggleGrid();
+    function loop() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      drawLadders();
+      drawPlayer();
+      update();
+      requestAnimationFrame(loop);
+    }
 
-
-
-
-    // TODO 2 - Create Platforms
-    createPlatform(100, 300, 150, 25, "red");
-    createPlatform(200, 400, 250, 25, "blue");
-    createPlatform(300, 500, 350, 25, "green");
-    createPlatform(400, 600, 450, 25, "purple");
-    createPlatform(500, 700, 550, 25, "orange");
-   
-
-
-
-
-
-
-    // TODO 3 - Create Collectables
-
-
-
-
-
-
-   
-    // TODO 4 - Create Cannons
-
-
-
-
-   
-   
-    //////////////////////////////////
-    // ONLY CHANGE ABOVE THIS POINT //
-    //////////////////////////////////
-  }
-
-
-  registerSetup(setup);
-});
+    loop();
+  </script>
+</body>
+</html>
